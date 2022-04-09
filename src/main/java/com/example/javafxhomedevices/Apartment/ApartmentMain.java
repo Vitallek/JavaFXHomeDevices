@@ -483,7 +483,7 @@ public class ApartmentMain {
     /*
      * Method that calculated total power of enabled devices
      * */
-    public void calculateTotalPower(){
+    public int calculateTotalPower(){
         if(!allDevices.isEmpty()){
             int totalPowerOfEnabled = 0;
             for (Device device : allDevices){
@@ -491,11 +491,10 @@ public class ApartmentMain {
                     totalPowerOfEnabled += device.getDevicePower();
                 }
             }
-            System.out.println("Total power: " + totalPowerOfEnabled + " wats.\n");
+            return totalPowerOfEnabled;
         } else {
-            System.out.println("No device detected. Total power is 0 wats. \n");
+            return 0;
         }
-
     }
 
     /*

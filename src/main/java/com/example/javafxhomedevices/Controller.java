@@ -2,6 +2,7 @@ package com.example.javafxhomedevices;
 
 import com.example.javafxhomedevices.Apartment.ApartmentMain;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -14,12 +15,14 @@ import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -29,6 +32,8 @@ public class Controller implements Initializable {
 //    fxml
     @FXML
     private Label devNameOverview;
+    @FXML
+    private Label activeDevPowerOverview;
     @FXML
     private Label devPowerOverview;
     @FXML
@@ -71,6 +76,9 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        paneOverview.setStyle("-fx-background-color : #02030A");
+        paneOverview.toFront();
+
         final String apartmentName = "r6siege";
 
         ApartmentMain Apartment = new ApartmentMain(apartmentName);
@@ -81,52 +89,81 @@ public class Controller implements Initializable {
         int socketAmountInt = Apartment.getAllSockets().size();
         int deviceAmountInt = Apartment.getAllDevices().size();
         int enabledDeviceAmountInt = Apartment.enabledDeviceAmount();
+        int activeDevPowerInt = Apartment.calculateTotalPower();
         roomAmountOverview.setText(Integer.toString(roomAmountInt));
         socketAmountOverview.setText(Integer.toString(socketAmountInt));
         devAmountOverview.setText(Integer.toString(deviceAmountInt));
         activeDevAmountOverview.setText(Integer.toString(enabledDeviceAmountInt));
+        activeDevPowerOverview.setText(Integer.toString(activeDevPowerInt));
         Node[] nodes = new Node[deviceAmountInt];
         for (int i = 0; i < deviceAmountInt; i++) {
             try {
                 final int j = i;
                 HBox labelContainer = new HBox();
-                labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5; -fx-background-insets: 0;");
+                labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
                 labelContainer.setAlignment(Pos.CENTER_LEFT);
                 labelContainer.setPrefHeight(53.0);
-                labelContainer.setPrefWidth(695.0);
-                labelContainer.setSpacing(80.0);
-                labelContainer.setOpaqueInsets(new Insets(0,0,0,10));
+                labelContainer.setPrefWidth(750.0);
 
 //                ImageView imageContainer = new ImageView();
-//                Image imageItem = new Image("file:assets/icons8_GPS_Antenna_64px_1.png");
+//                Image imageItem = new Image("file:assets/icons8_GPS_Antenna_64px_1.png", false);
 //                imageContainer.setImage(imageItem);
+//                imageContainer.setFitHeight(31.0);
+//                imageContainer.setFitWidth(25.0);
 //                labelContainer.getChildren().add(imageContainer);
 
                 Label itemDevName = new Label (
                     Apartment.getAllDevices().get(i).getDeviceName()
                 );
                 itemDevName.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevName.setAlignment(Pos.CENTER);
+                itemDevName.setPrefWidth(200.0);
                 labelContainer.getChildren().add(itemDevName);
 
                 Label itemDevPower = new Label(
                     Integer.toString(Apartment.getAllDevices().get(i).getDevicePower())
                 );
                 itemDevPower.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevPower.setAlignment(Pos.CENTER);
+                itemDevPower.setPrefWidth(100.0);
                 labelContainer.getChildren().add(itemDevPower);
 
                 Label itemDevRoom = new Label(
                     Apartment.getAllDevices().get(i).getRoom().getRoomName()
                 );
                 itemDevRoom.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevRoom.setAlignment(Pos.CENTER);
+                itemDevRoom.setPrefWidth(150.0);
                 labelContainer.getChildren().add(itemDevRoom);
 
                 Label itemDevSocket = new Label(
                     Apartment.getAllDevices().get(i).getSocket().getSocketName()
                 );
                 itemDevSocket.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevSocket.setAlignment(Pos.CENTER);
+                itemDevSocket.setPrefWidth(150.0);
                 labelContainer.getChildren().add(itemDevSocket);
 
                 Button itemDevStatus = new Button("-");
+                itemDevStatus.setId(Integer.toString(i));
+                itemDevStatus.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        Apartment.getAllDevices().get(Integer.parseInt(itemDevStatus.getId())).switchPower();
+                        if (Apartment.getAllDevices().get(Integer.parseInt(itemDevStatus.getId())).getIsOn()){
+                            itemDevStatus.setText("active");
+                            itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.GREEN, 2.0, 2.0,0.0,0.0));
+                        } else {
+                            itemDevStatus.setText("inactive");
+                            itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.RED, 2.0, 2.0,0.0,0.0));
+                        }
+                        activeDevAmountOverview.setText(String.valueOf(Apartment.enabledDeviceAmount()));
+                        activeDevPowerOverview.setText(String.valueOf(Apartment.calculateTotalPower()));
+                    }
+                });
+                itemDevStatus.setPrefHeight(10.0);
+                itemDevStatus.setAlignment(Pos.CENTER);
+                itemDevStatus.setPrefWidth(80.0);
                 if (Apartment.getAllDevices().get(i).getIsOn()){
                     itemDevStatus.setText("active");
                     itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.GREEN, 2.0, 2.0,0.0,0.0));
@@ -134,7 +171,6 @@ public class Controller implements Initializable {
                 } else {
                     itemDevStatus.setText("inactive");
                     itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.RED, 2.0, 2.0,0.0,0.0));
-
                 }
                 itemDevStatus.setTextFill(Paint.valueOf("#b7c3d7"));
                 labelContainer.getChildren().add(itemDevStatus);

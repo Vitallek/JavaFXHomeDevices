@@ -17,17 +17,6 @@ public class Main extends Application {
         //set stage borderless
         //primaryStage.initStyle(StageStyle.UNDECORATED);
 
-        //drag it here
-        root.setOnMousePressed(event -> {
-            x = event.getSceneX();
-            y = event.getSceneY();
-        });
-        root.setOnMouseDragged(event -> {
-
-            primaryStage.setX(event.getScreenX() - x);
-            primaryStage.setY(event.getScreenY() - y);
-
-        });
         primaryStage.show();
     }
 

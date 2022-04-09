@@ -51,6 +51,7 @@ public class Device implements Serializable {
         return socket;
     }
 
+    public void switchPower(){this.isOn = !this.isOn;}
     public void turnDeviceOn() {
         this.isOn = true;
     }
