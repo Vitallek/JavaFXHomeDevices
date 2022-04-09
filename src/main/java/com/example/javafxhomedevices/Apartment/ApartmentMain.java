@@ -23,7 +23,18 @@ public class ApartmentMain {
         this.allDevices = new ArrayList<Device>();
         this.fileName = apartmentName;
     }
-
+    public ArrayList<Room> getAllRooms() {
+        return allRooms;
+    }
+    public ArrayList<Socket> getAllSockets() {
+        return allSockets;
+    }
+    public ArrayList<Device> getAllDevices() {
+        return allDevices;
+    }
+    public String getFileName() {
+        return fileName;
+    }
 
     /*
     * creates 1 apartment with 2 rooms
@@ -139,7 +150,7 @@ public class ApartmentMain {
      * @param ArrayList<Socket>
      * @param ArrayList<device>
      * */
-    private void saveConfig(Scanner scanner){
+    public void saveConfig(Scanner scanner){
         System.out.println("Enter filename WITHOUT format (name): \n");
         ObjectReaderWriter objW = new ObjectReaderWriter();
         fileName = scanner.nextLine();
@@ -155,7 +166,7 @@ public class ApartmentMain {
      * it's also deletes all arrays and fills them again
      * @param scanner that contains file name
      * */
-    private void loadConfig(Scanner scanner){
+    public void loadConfig(Scanner scanner){
         System.out.println("Enter filename WITH format (name.amogus): \n");
         fileName = scanner.nextLine();
         while(fileName.isEmpty()){
@@ -185,7 +196,7 @@ public class ApartmentMain {
     * Method that adds room into apartment
     * @param scanner that contains room's name
     * */
-    private void addRoom(Scanner scanner) {
+    public void addRoom(Scanner scanner) {
         System.out.println("\n Enter room name: ");
         String roomName = scanner.nextLine();
         while (roomName.length() == 0 || findRoom(roomName) != null){
@@ -201,7 +212,7 @@ public class ApartmentMain {
     /*
     * Method that shows rooms from allRooms arrayList
     * */
-    private void showRooms(){
+    public void showRooms(){
         if(!allRooms.isEmpty()){
             System.out.println("\n Available rooms: ");
             for(Room room: allRooms){
@@ -216,7 +227,7 @@ public class ApartmentMain {
     * @param scanner contains socket name first
     * @param scanner contains room name second
     * */
-    private void addSocket(Scanner scanner){
+    public void addSocket(Scanner scanner){
         if(allRooms.isEmpty()) {
             System.out.println("Add room first! \n");
             return;
@@ -246,7 +257,7 @@ public class ApartmentMain {
     /*
      * Method that shows sockets from allSockets arrayList
      * */
-    private void showSockets(){
+    public void showSockets(){
         if(!allSockets.isEmpty()){
             for(Socket socket: allSockets){
                 System.out.println(socket);
@@ -261,7 +272,7 @@ public class ApartmentMain {
      * @param scanner contains device name first
      * @param scanner contains device power second
      * */
-    private void addDevice(Scanner scanner){
+    public void addDevice(Scanner scanner){
         if(allSockets.isEmpty()) {
             System.out.println("\n No sockets in rooms. ");
             return;
@@ -338,7 +349,7 @@ public class ApartmentMain {
     /*
      * Method that shows devices from allDevices arrayList
      * */
-    private void showDevices(){
+    public void showDevices(){
         if(!allDevices.isEmpty()){
             for(Device device : allDevices){
                 System.out.println(device);
@@ -352,7 +363,7 @@ public class ApartmentMain {
      * Method that removes device from memory
      * @param scanner contains device name to delete
      * */
-    private void removeDevice(Scanner scanner){
+    public void removeDevice(Scanner scanner){
         if(!allDevices.isEmpty()){
             System.out.println("\n Enter device name. Devices to delete: ");
             showDevices();
@@ -386,7 +397,7 @@ public class ApartmentMain {
      * Method that turns on device
      * @param scanner contains device name to turn on
      * */
-    private void turnOnDevice(Scanner scanner){
+    public void turnOnDevice(Scanner scanner){
         if(allDevices.isEmpty() && disabledDeviceAmount() == 0){
             System.out.println("No device detected or all devices are turned on. \n");
             return;
@@ -422,7 +433,7 @@ public class ApartmentMain {
      * Method that turns on device
      * @param scanner contains device name to turn on
      * */
-    private void turnOffDevice(Scanner scanner){
+    public void turnOffDevice(Scanner scanner){
         if(allDevices.isEmpty() && enabledDeviceAmount() == 0){
             System.out.println("No device detected or all devices are turned off. \n");
             return;
@@ -457,7 +468,7 @@ public class ApartmentMain {
     /*
      * Method that sorts devices by power in descend order
      * */
-    private void sortDevices(){
+    public void sortDevices(){
         if(!allDevices.isEmpty()){
             ArrayList<Device> sortedDeviceListByPower = allDevices;
             sortedDeviceListByPower.sort(new DevicePowerSorter());
@@ -472,7 +483,7 @@ public class ApartmentMain {
     /*
      * Method that calculated total power of enabled devices
      * */
-    private void calculateTotalPower(){
+    public void calculateTotalPower(){
         if(!allDevices.isEmpty()){
             int totalPowerOfEnabled = 0;
             for (Device device : allDevices){
@@ -492,7 +503,7 @@ public class ApartmentMain {
      * @param scanner contains device name
      * @return device
      * */
-    private void findDeviceByInput(Scanner scanner){
+    public void findDeviceByInput(Scanner scanner){
         if(!allDevices.isEmpty()){
             System.out.println("Input device name (or part of name): ");
             String partOfDeviceName = scanner.nextLine();
@@ -512,7 +523,7 @@ public class ApartmentMain {
      * @param scanner contains socket name
      * @return socket
      * */
-    private Socket findSocket(String name){
+    public Socket findSocket(String name){
         if (allSockets.isEmpty()) {
             System.out.println("No sockets detected. \n");
         } else {
@@ -530,7 +541,7 @@ public class ApartmentMain {
      * @param scanner contains socket name
      * @return socket
      * */
-    private Room findRoom(String name){
+    public Room findRoom(String name){
         if (allRooms.isEmpty()) {
             System.out.println("No rooms detected. \n");
         } else {
@@ -547,7 +558,7 @@ public class ApartmentMain {
      * Method that shows socket in room
      * @param room which sockets we want to see
      * */
-    private void showFreeSockets(){
+    public void showFreeSockets(){
         for(Socket socket: allSockets){
             if(socket.getDevice() == null){
                 System.out.println("\t" + socket);
@@ -560,7 +571,7 @@ public class ApartmentMain {
      * @param String deviceName
      * @return device with deviceName
      * */
-    private Device getDeviceByFullName(String deviceName){
+    public Device getDeviceByFullName(String deviceName){
         for (Device device : allDevices){
             if(device.getDeviceName().equalsIgnoreCase(deviceName)){
                 return device;
@@ -573,7 +584,7 @@ public class ApartmentMain {
      * Method that shows enabled devices
      * @param room which sockets we want to see
      * */
-    private void showEnabledDevices(){
+    public void showEnabledDevices(){
         for (Device device : allDevices){
             if (device.getIsOn()){
                 System.out.println(device);
@@ -585,7 +596,7 @@ public class ApartmentMain {
      * Method that shows disabled devices
      * @param room which sockets we want to see
      * */
-    private void showDisabledDevices(){
+    public void showDisabledDevices(){
         for (Device device : allDevices){
             if (!device.getIsOn()){
                 System.out.println(device);
@@ -597,7 +608,7 @@ public class ApartmentMain {
      * Method that return amount of enabled devices
      * @return counter
      * */
-    private int enabledDeviceAmount(){
+    public int enabledDeviceAmount(){
         int counter = 0;
         for (Device device : allDevices){
             if (device.getIsOn()){
@@ -611,7 +622,7 @@ public class ApartmentMain {
      * Method that return amount of disabled devices
      * @return counter
      * */
-    private int disabledDeviceAmount(){
+    public int disabledDeviceAmount(){
         int counter = 0;
         for (Device device : allDevices){
             if (!device.getIsOn()){
