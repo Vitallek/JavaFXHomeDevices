@@ -221,27 +221,7 @@ public class ApartmentMain {
     * @param scanner contains socket name first
     * @param scanner contains room name second
     * */
-    public void addSocket(Scanner scanner){
-        if(allRooms.isEmpty()) {
-            System.out.println("Add room first! \n");
-            return;
-        }
-        System.out.println("\n Enter socket name: ");
-        String socketName = scanner.nextLine();
-        while (socketName.length() == 0 || findSocket(socketName) != null){
-            System.out.println("\n Name cannot be empty or already taken, try again: ");
-            socketName = scanner.nextLine();
-        }
-
-        System.out.println("\n Enter room name where socket is situated. Available rooms:  ");
-        showRooms();
-        String roomName = scanner.nextLine();
-        while (apartment.findRoom(roomName) == null){
-            System.out.println("\n No room with this name found, try again. Available rooms: ");
-            showRooms();
-            roomName = scanner.nextLine();
-        }
-
+    public void addSocket(String socketName, String roomName){
         Socket socket = new Socket(socketName,apartment.findRoom(roomName));
         apartment.findRoom(roomName).addSocketToRoom(socket);
         allSockets.add(socket);

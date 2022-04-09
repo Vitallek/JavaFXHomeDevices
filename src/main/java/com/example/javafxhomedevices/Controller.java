@@ -4,30 +4,21 @@ import com.example.javafxhomedevices.Apartment.ApartmentMain;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -38,7 +29,13 @@ public class Controller implements Initializable {
     @FXML
     private TextField roomNameEnter;
     @FXML
+    private TextField roomForSocketEnter;
+    @FXML
+    private TextField socketNameEnter;
+    @FXML
     private Button addRoomBTN;
+    @FXML
+    private Button addSocketBTN;
     @FXML
     private Label activeDevPowerOverview;
     @FXML
@@ -54,7 +51,9 @@ public class Controller implements Initializable {
     @FXML
     private VBox pnItems = null;
     @FXML
-    private VBox roomsPane = null;
+    private VBox roomsItemPane = null;
+    @FXML
+    private VBox socketItemPane = null;
     @FXML
     private Label roomAmountOverview;
     @FXML
@@ -97,47 +96,158 @@ public class Controller implements Initializable {
         Apartment.startConfig();
         initOverviewPane(Apartment);
         initRoomPane(Apartment);
+        initSocketPane(Apartment);
     }
 
 
     public void handleClicks(ActionEvent actionEvent) {
         if (actionEvent.getSource() == btnRooms) {
-            roomsPane.setVisible(true);
+            paneRooms.setVisible(true);
             paneOverview.setVisible(false);
             paneDevices.setVisible(false);
             paneSockets.setVisible(false);
         }
         if (actionEvent.getSource() == btnSockets) {
-            roomsPane.setVisible(false);
+            paneRooms.setVisible(false);
             paneOverview.setVisible(false);
             paneDevices.setVisible(false);
             paneSockets.setVisible(true);
         }
         if (actionEvent.getSource() == btnOverview) {
-            roomsPane.setVisible(false);
+            paneRooms.setVisible(false);
             paneOverview.setVisible(true);
             paneDevices.setVisible(false);
             paneSockets.setVisible(false);
         }
         if(actionEvent.getSource()==btnDevices)
         {
-            roomsPane.setVisible(false);
+            paneRooms.setVisible(false);
             paneOverview.setVisible(false);
             paneDevices.setVisible(true);
             paneSockets.setVisible(false);
         }
     }
 
-    public void initRoomPane(ApartmentMain Apartment){
-        int roomAmountInt = Apartment.getAllRooms().size();
-        for (int i = 0; i < roomAmountInt; i++) {
+    public void initSocketPane(ApartmentMain Apartment){
+        int socketAmountInt = Apartment.getAllSockets().size();
+        for (int i = 0; i < socketAmountInt; i++) {
             try {
-                final int j = i;
                 HBox labelContainer = new HBox();
                 labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
                 labelContainer.setAlignment(Pos.CENTER_LEFT);
                 labelContainer.setPrefHeight(53.0);
-                labelContainer.setPrefWidth(750.0);
+                labelContainer.setPrefWidth(420.0);
+
+                Label itemSocketName = new Label (
+                        Apartment.getAllSockets().get(i).getSocketName()
+                );
+                itemSocketName.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemSocketName.setAlignment(Pos.CENTER);
+                itemSocketName.setPrefWidth(180.0);
+                labelContainer.getChildren().add(itemSocketName);
+
+                Label itemSocketRoomName = new Label (
+                        Apartment.getAllSockets().get(i).getRoom().getRoomName()
+                );
+                itemSocketRoomName.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemSocketRoomName.setAlignment(Pos.CENTER);
+                itemSocketRoomName.setPrefWidth(180.0);
+                labelContainer.getChildren().add(itemSocketRoomName);
+
+                Label itemSocketDevice = new Label (
+                        Apartment.getAllSockets().get(i).getDevice().getDeviceName()
+                );
+                itemSocketDevice.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemSocketDevice.setAlignment(Pos.CENTER);
+                itemSocketDevice.setPrefWidth(180.0);
+                labelContainer.getChildren().add(itemSocketDevice);
+
+                socketItemPane.getChildren().add(labelContainer);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        addSocketBTN.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(Apartment.getAllRooms().size() == 0){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="No rooms exists. Add room first.";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                if(roomForSocketEnter.getText().equals("") || socketNameEnter.getText().equals("")){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="Room or socket name cannot be empty";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                if(Apartment.findRoom(roomForSocketEnter.getText()) == null){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="No room found with provided name. Try another one";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+
+                Apartment.addSocket(socketNameEnter.getText(),roomForSocketEnter.getText());
+                socketAmountOverview.setText(String.valueOf(Integer.parseInt(socketAmountOverview.getText()) + 1));
+
+                HBox labelContainer = new HBox();
+                labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
+                labelContainer.setAlignment(Pos.CENTER_LEFT);
+                labelContainer.setPrefHeight(53.0);
+                labelContainer.setPrefWidth(420.0);
+
+                Label itemSocketName = new Label (
+                        Apartment.getAllSockets().get(Apartment.getAllSockets().size() - 1).getSocketName()
+                );
+                itemSocketName.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemSocketName.setAlignment(Pos.CENTER);
+                itemSocketName.setPrefWidth(180.0);
+                labelContainer.getChildren().add(itemSocketName);
+
+                Label itemSocketRoomName = new Label (
+                        Apartment.getAllSockets().get(Apartment.getAllSockets().size() - 1).getRoom().getRoomName()
+                );
+                itemSocketRoomName.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemSocketRoomName.setAlignment(Pos.CENTER);
+                itemSocketRoomName.setPrefWidth(180.0);
+                labelContainer.getChildren().add(itemSocketRoomName);
+
+                Label itemSocketDevice = new Label ("-");
+                if(Apartment.getAllSockets().get(Apartment.getAllSockets().size() - 1).getDevice() != null){
+                    itemSocketDevice.setText(Apartment.getAllSockets().get(Apartment.getAllSockets().size() - 1).getDevice().getDeviceName());
+                }
+                itemSocketDevice.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemSocketDevice.setAlignment(Pos.CENTER);
+                itemSocketDevice.setPrefWidth(180.0);
+                labelContainer.getChildren().add(itemSocketDevice);
+
+                socketItemPane.getChildren().add(labelContainer);
+            }
+        });
+    }
+
+    public void initRoomPane(ApartmentMain Apartment){
+        int roomAmountInt = Apartment.getAllRooms().size();
+        for (int i = 0; i < roomAmountInt; i++) {
+            try {
+                HBox labelContainer = new HBox();
+                labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
+                labelContainer.setAlignment(Pos.CENTER_LEFT);
+                labelContainer.setPrefHeight(53.0);
+                labelContainer.setPrefWidth(325.0);
 
                 Label itemRoomName = new Label (
                         Apartment.getAllRooms().get(i).getRoomName()
@@ -146,7 +256,7 @@ public class Controller implements Initializable {
                 itemRoomName.setAlignment(Pos.CENTER);
                 itemRoomName.setPrefWidth(200.0);
                 labelContainer.getChildren().add(itemRoomName);
-                roomsPane.getChildren().add(labelContainer);
+                roomsItemPane.getChildren().add(labelContainer);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -156,32 +266,32 @@ public class Controller implements Initializable {
         addRoomBTN.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(!roomNameEnter.getText().equals("")){
-                    Apartment.addRoom(roomNameEnter.getText());
-                    roomAmountOverview.setText(String.valueOf(Integer.parseInt(roomAmountOverview.getText()) + 1));
-
-                    HBox labelContainer = new HBox();
-                    labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
-                    labelContainer.setAlignment(Pos.CENTER_LEFT);
-                    labelContainer.setPrefHeight(53.0);
-                    labelContainer.setPrefWidth(750.0);
-
-                    Label itemRoomName = new Label (
-                            Apartment.getAllRooms().get(Apartment.getAllRooms().size()-1).getRoomName()
-                    );
-                    itemRoomName.setTextFill(Paint.valueOf("#b7c3d7"));
-                    itemRoomName.setAlignment(Pos.CENTER);
-                    itemRoomName.setPrefWidth(200.0);
-                    labelContainer.getChildren().add(itemRoomName);
-                    roomsPane.getChildren().add(labelContainer);
-                } else {
+                if(roomNameEnter.getText().equals("")){
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("some alert");
                     alert.setHeaderText("Information Alert");
                     String s ="Room name cannot be empty";
                     alert.setContentText(s);
                     alert.show();
+                    return;
                 }
+                Apartment.addRoom(roomNameEnter.getText());
+                roomAmountOverview.setText(String.valueOf(Integer.parseInt(roomAmountOverview.getText()) + 1));
+
+                HBox labelContainer = new HBox();
+                labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
+                labelContainer.setAlignment(Pos.CENTER_LEFT);
+                labelContainer.setPrefHeight(53.0);
+                labelContainer.setPrefWidth(750.0);
+
+                Label itemRoomName = new Label (
+                        Apartment.getAllRooms().get(Apartment.getAllRooms().size()-1).getRoomName()
+                );
+                itemRoomName.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemRoomName.setAlignment(Pos.CENTER);
+                itemRoomName.setPrefWidth(200.0);
+                labelContainer.getChildren().add(itemRoomName);
+                roomsItemPane.getChildren().add(labelContainer);
             }
         });
     }
@@ -199,7 +309,6 @@ public class Controller implements Initializable {
         activeDevPowerOverview.setText(Integer.toString(activeDevPowerInt));
         for (int i = 0; i < deviceAmountInt; i++) {
             try {
-                final int j = i;
                 HBox labelContainer = new HBox();
                 labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
                 labelContainer.setAlignment(Pos.CENTER_LEFT);

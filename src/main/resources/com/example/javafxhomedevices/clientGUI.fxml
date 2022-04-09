@@ -217,7 +217,7 @@
                          </HBox>
                          <ScrollPane prefHeight="468.0" prefWidth="325.0" stylesheets="@style.css">
                              <content>
-                                 <VBox fx:id="roomsPane" prefHeight="455.0" prefWidth="325.0" spacing="5.0" style="-fx-background-color: #02030A;">
+                                 <VBox fx:id="roomsItemPane" prefHeight="455.0" prefWidth="325.0" spacing="5.0" style="-fx-background-color: #02030A;">
                                      <padding>
                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                      </padding>
@@ -258,8 +258,84 @@
                 </Pane>
 
 
-                <Pane fx:id="paneSockets" prefHeight="200.0" prefWidth="200.0" visible="false" />
-                <Pane fx:id="paneDevices" prefHeight="200.0" prefWidth="200.0" visible="false" />
+                <Pane fx:id="paneSockets" prefHeight="200.0" prefWidth="200.0">
+                    <children>
+                        <VBox layoutX="14.0" layoutY="25.0" prefHeight="550.0" prefWidth="420.0">
+                            <children>
+                                <Label text="Socket list" textFill="#e7e5e5">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                </Label>
+                                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="45.0" prefWidth="400.0" style="-fx-background-color: #02030A;">
+                                    <children>
+                                        <Label alignment="CENTER" prefWidth="180.0" text="Name" textFill="#e7e5e5">
+                                            <HBox.margin>
+                                                <Insets />
+                                            </HBox.margin>
+                                        </Label>
+                              <Label alignment="CENTER" layoutX="10.0" layoutY="24.0" prefWidth="180.0" text="Room" textFill="#e7e5e5" />
+                              <Label alignment="CENTER" layoutX="190.0" layoutY="24.0" prefWidth="180.0" text="Device" textFill="#e7e5e5" />
+                                    </children>
+                                </HBox>
+                                <ScrollPane prefHeight="468.0" prefWidth="400.0" stylesheets="@style.css">
+                                    <content>
+                                        <VBox fx:id="socketItemPane" prefHeight="455.0" prefWidth="420.0" spacing="5.0" style="-fx-background-color: #02030A;">
+                                            <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
+                            </children>
+                        </VBox>
+                        <VBox layoutX="423.0" layoutY="25.0" prefHeight="500.0" prefWidth="325.0">
+                            <children>
+                                <Label alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="35.0" prefWidth="245.0" text="Add socket here" textAlignment="CENTER" textFill="#e7e5e5">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets left="40.0" />
+                                    </VBox.margin>
+                                </Label>
+                                <TextField fx:id="roomForSocketEnter" prefHeight="25.0" prefWidth="270.0" promptText="room  name">
+                                    <opaqueInsets>
+                                        <Insets />
+                                    </opaqueInsets>
+                                    <VBox.margin>
+                                        <Insets left="40.0" right="40.0" top="20.0" />
+                                    </VBox.margin>
+                                </TextField>
+                                <TextField fx:id="socketNameEnter" prefHeight="25.0" prefWidth="270.0" promptText="socket name">
+                                    <opaqueInsets>
+                                        <Insets />
+                                    </opaqueInsets>
+                                    <VBox.margin>
+                                        <Insets left="40.0" right="40.0" top="20.0" />
+                                    </VBox.margin>
+                                </TextField>
+                                <Button fx:id="addSocketBTN" alignment="CENTER" prefHeight="42.0" prefWidth="307.0" style="-fx-background-color: #02030A; -fx-border-color: #B7C3D7; -fx-border-radius: 25;" text="ADD SOCKET" textFill="WHITE">
+                                    <font>
+                                        <Font size="17.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets left="40.0" right="40.0" top="40.0" />
+                                    </VBox.margin>
+                                </Button>
+                            </children>
+                        </VBox>
+                    </children>
+                </Pane>
+
+
+                <Pane fx:id="paneDevices" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Label text="Label" />
+               </children>
+                </Pane>
+
+
             </children>
         </StackPane>
     </children>
