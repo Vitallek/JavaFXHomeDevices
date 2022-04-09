@@ -279,34 +279,23 @@ public class ApartmentMain {
      * Method that removes device from memory
      * @param scanner contains device name to delete
      * */
-    public void removeDevice(Scanner scanner){
-        if(!allDevices.isEmpty()){
-            System.out.println("\n Enter device name. Devices to delete: ");
-            showDevices();
-            String deviceName = scanner.nextLine();
-            Device deviceToDelete;
-            while (getDeviceByFullName(deviceName) == null){
-                System.out.println("\n No device found. Devices to delete: ");
-                showDevices();
-                deviceName = scanner.nextLine();
+    public void removeDevice(String deviceName){
+
+        Device deviceToDelete;
+
+        //TODO вместо сравнения имён надо сранивать обьекты. но сами обьекты не сравниваюся а сравниваются ссылки?
+        // ибо удаляет не то
+
+        deviceToDelete = getDeviceByFullName(deviceName);
+        deviceToDelete.getRoom().removeDeviceFromRoom(deviceToDelete);
+        deviceToDelete.getSocket().removeDeviceFromSocket(deviceToDelete);
+        for(int i = 0; i < allDevices.size(); i++){
+            if(allDevices.get(i).getDeviceName().equals(deviceName)){
+                allDevices.remove(i);
             }
-
-            //TODO вместо сравнения имён надо сранивать обьекты. но сами обьекты не сравниваюся а сравниваются ссылки?
-            // ибо удаляет не то
-
-            deviceToDelete = getDeviceByFullName(deviceName);
-            deviceToDelete.getRoom().removeDeviceFromRoom(deviceToDelete);
-            deviceToDelete.getSocket().removeDeviceFromSocket(deviceToDelete);
-            for(int i = 0; i < allDevices.size(); i++){
-                if(allDevices.get(i).getDeviceName().equals(deviceName)){
-                    allDevices.remove(i);
-                }
-            }
-
-            System.out.println("\n Device " + deviceToDelete + " was removed. " + "\n");
-        } else {
-            System.out.println("No device detected. \n");
         }
+
+        System.out.println("\n Device " + deviceToDelete + " was removed. " + "\n");
     }
 
     /*

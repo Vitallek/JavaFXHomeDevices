@@ -1,11 +1,15 @@
 package com.example.javafxhomedevices;
 
 import com.example.javafxhomedevices.Apartment.ApartmentMain;
+import com.example.javafxhomedevices.Apartment.Device;
+import com.example.javafxhomedevices.Apartment.DevicePowerSorter;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,6 +23,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -66,6 +72,8 @@ public class Controller implements Initializable {
     private VBox deviceItemPane = null;
     @FXML
     private Label roomAmountOverview;
+    @FXML
+    private Button powerSort;
     @FXML
     private Label socketAmountOverview;
     @FXML
@@ -146,23 +154,23 @@ public class Controller implements Initializable {
         }
     }
 
-
     public void initDevicePane(ApartmentMain Apartment){
         int deviceAmountInt = Apartment.getAllDevices().size();
         for (int i = 0; i < deviceAmountInt; i++) {
             try {
                 HBox labelContainer = new HBox();
+                labelContainer.setSpacing(20.0);
                 labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
                 labelContainer.setAlignment(Pos.CENTER_LEFT);
                 labelContainer.setPrefHeight(53.0);
-                labelContainer.setPrefWidth(450.0);
+                labelContainer.setPrefWidth(700);
 
                 Label itemDevName = new Label (
                     Apartment.getAllDevices().get(i).getDeviceName()
                 );
                 itemDevName.setTextFill(Paint.valueOf("#b7c3d7"));
                 itemDevName.setAlignment(Pos.CENTER);
-                itemDevName.setPrefWidth(200.0);
+                itemDevName.setPrefWidth(190.0);
                 labelContainer.getChildren().add(itemDevName);
 
                 Label itemDevPower = new Label(
@@ -170,7 +178,7 @@ public class Controller implements Initializable {
                 );
                 itemDevPower.setTextFill(Paint.valueOf("#b7c3d7"));
                 itemDevPower.setAlignment(Pos.CENTER);
-                itemDevPower.setPrefWidth(100.0);
+                itemDevPower.setPrefWidth(90.0);
                 labelContainer.getChildren().add(itemDevPower);
 
                 Label itemDevRoom = new Label(
@@ -178,7 +186,7 @@ public class Controller implements Initializable {
                 );
                 itemDevRoom.setTextFill(Paint.valueOf("#b7c3d7"));
                 itemDevRoom.setAlignment(Pos.CENTER);
-                itemDevRoom.setPrefWidth(150.0);
+                itemDevRoom.setPrefWidth(140.0);
                 labelContainer.getChildren().add(itemDevRoom);
 
                 Button itemDevStatus = new Button("-");
@@ -200,7 +208,7 @@ public class Controller implements Initializable {
                 });
                 itemDevStatus.setPrefHeight(10.0);
                 itemDevStatus.setAlignment(Pos.CENTER);
-                itemDevStatus.setPrefWidth(80.0);
+                itemDevStatus.setPrefWidth(90.0);
 
                 if (Apartment.getAllDevices().get(i).getIsOn()){
                     itemDevStatus.setText("active");
@@ -213,12 +221,36 @@ public class Controller implements Initializable {
                 itemDevStatus.setTextFill(Paint.valueOf("#b7c3d7"));
                 labelContainer.getChildren().add(itemDevStatus);
 
+                Button deleteDevice = new Button("Delete");
+                deleteDevice.setPrefHeight(10.0);
+                deleteDevice.setAlignment(Pos.CENTER);
+                deleteDevice.setPrefWidth(70.0);
+                deleteDevice.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        Apartment.removeDevice(itemDevName.getText());
+                        deviceItemPane.getChildren().clear();
+                        initDevicePane(Apartment);
+                    }
+                });
+
+                labelContainer.getChildren().add(deleteDevice);
+
                 deviceItemPane.getChildren().add(labelContainer);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
+        powerSort.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                ArrayList<Device> sortedDeviceListByPower = Apartment.getAllDevices();
+                sortedDeviceListByPower.sort(new DevicePowerSorter());
+                //TODO
+                deviceItemPane.getChildren().sorted();
+            }
+        });
         addDeviceBTN.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -333,6 +365,19 @@ public class Controller implements Initializable {
                 itemDevStatus.setTextFill(Paint.valueOf("#b7c3d7"));
                 labelContainer.getChildren().add(itemDevStatus);
 
+                Button deleteDevice = new Button("Delete");
+                deleteDevice.setPrefHeight(10.0);
+                deleteDevice.setAlignment(Pos.CENTER);
+                deleteDevice.setPrefWidth(70.0);
+                deleteDevice.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        Apartment.removeDevice(itemDevName.getText());
+                        deviceItemPane.getChildren().clear();
+                        initDevicePane(Apartment);
+                    }
+                });
+
                 deviceItemPane.getChildren().add(labelContainer);
             }
         });
@@ -366,7 +411,7 @@ public class Controller implements Initializable {
                 labelContainer.getChildren().add(itemSocketRoomName);
 
                 Label itemSocketDevice = new Label ("-");
-                
+
                 if(Apartment.getAllSockets().get(i).getDevice() != null){
                     itemSocketDevice.setText(Apartment.getAllSockets().get(i).getDevice().getDeviceName());
                 }
