@@ -78,70 +78,70 @@ public class ApartmentMain {
     * prints list of options
     *
     * */
-    private void startMenu(String[] options){
-        for (String option : options){
-            System.out.println(option);
-        }
-    }
-
-    public void main(String[] args) {
-
-        apartment = new Apartment(apartmentName);
-        System.out.print("Welcome to " + apartment + "\n Select option: \n");
-
-        allRooms = new ArrayList<>();
-        allSockets = new ArrayList<>();
-        allDevices = new ArrayList<>();
-        String[] options = {"1. Add Room",
-                "2. Room list",
-                "3. Add socket to room",
-                "4. Socket list",
-                "5. Add device",
-                "6. Delete device",
-                "7. Device list",
-                "8. Turn ON device",
-                "9. Turn OFF device",
-                "10. Sort devices by power",
-                "11. Show total power",
-                "12. Find device by name",
-                "101. Save config to file",
-                "102. Load config from file",
-                "103. Load default config from inside",
-                "0. Exit",
-        };
-        Scanner scanner = new Scanner(System.in);
-        int option = 1;
-
-        while (option != 0){
-            startMenu(options);
-            try{
-                option = Integer.parseInt(scanner.nextLine());
-                switch (option) {
-                    case 1: addRoom(scanner); break;
-                    case 2: showRooms(); break;
-                    case 3: addSocket(scanner); break;
-                    case 4: showSockets(); break;
-                    case 5: addDevice(scanner); break;
-                    case 6: removeDevice(scanner); break;
-                    case 7: showDevices(); break;
-                    case 8: turnOnDevice(scanner); break;
-                    case 9: turnOffDevice(scanner); break;
-                    case 10: sortDevices(); break;
-                    case 11: calculateTotalPower(); break;
-                    case 12: findDeviceByInput(scanner); break;
-                    case 101: saveConfig(scanner); break;
-                    case 102: loadConfig(scanner); break;
-                    case 103: startConfig(); break;
-                    case 0: System.out.println("Bye!"); break;
-                    default: System.out.println("Input value should be from 0 to 12 \n"); break;
-                }
-            }
-            catch(Exception ex){
-                System.out.println("Input error " + ex);
-            }
-        }
-        scanner.close();
-    }
+//    private void startMenu(String[] options){
+//        for (String option : options){
+//            System.out.println(option);
+//        }
+//    }
+//
+//    public void main(String[] args) {
+//
+//        apartment = new Apartment(apartmentName);
+//        System.out.print("Welcome to " + apartment + "\n Select option: \n");
+//
+//        allRooms = new ArrayList<>();
+//        allSockets = new ArrayList<>();
+//        allDevices = new ArrayList<>();
+//        String[] options = {"1. Add Room",
+//                "2. Room list",
+//                "3. Add socket to room",
+//                "4. Socket list",
+//                "5. Add device",
+//                "6. Delete device",
+//                "7. Device list",
+//                "8. Turn ON device",
+//                "9. Turn OFF device",
+//                "10. Sort devices by power",
+//                "11. Show total power",
+//                "12. Find device by name",
+//                "101. Save config to file",
+//                "102. Load config from file",
+//                "103. Load default config from inside",
+//                "0. Exit",
+//        };
+//        Scanner scanner = new Scanner(System.in);
+//        int option = 1;
+//
+//        while (option != 0){
+//            startMenu(options);
+//            try{
+//                option = Integer.parseInt(scanner.nextLine());
+//                switch (option) {
+//                    case 1: addRoom(scanner); break;
+//                    case 2: showRooms(); break;
+//                    case 3: addSocket(scanner); break;
+//                    case 4: showSockets(); break;
+//                    case 5: addDevice(scanner); break;
+//                    case 6: removeDevice(scanner); break;
+//                    case 7: showDevices(); break;
+//                    case 8: turnOnDevice(scanner); break;
+//                    case 9: turnOffDevice(scanner); break;
+//                    case 10: sortDevices(); break;
+//                    case 11: calculateTotalPower(); break;
+//                    case 12: findDeviceByInput(scanner); break;
+//                    case 101: saveConfig(scanner); break;
+//                    case 102: loadConfig(scanner); break;
+//                    case 103: startConfig(); break;
+//                    case 0: System.out.println("Bye!"); break;
+//                    default: System.out.println("Input value should be from 0 to 12 \n"); break;
+//                }
+//            }
+//            catch(Exception ex){
+//                System.out.println("Input error " + ex);
+//            }
+//        }
+//        scanner.close();
+//    }
 
     /*
      * This method saves objects to file
@@ -196,13 +196,7 @@ public class ApartmentMain {
     * Method that adds room into apartment
     * @param scanner that contains room's name
     * */
-    public void addRoom(Scanner scanner) {
-        System.out.println("\n Enter room name: ");
-        String roomName = scanner.nextLine();
-        while (roomName.length() == 0 || findRoom(roomName) != null){
-            System.out.println("\n Name cannot be empty, or already taken, try again: ");
-            roomName = scanner.nextLine();
-        }
+    public void addRoom(String roomName) {
         Room room = new Room(roomName);
         apartment.addRoomToAppartment(room);
         allRooms.add(room);
