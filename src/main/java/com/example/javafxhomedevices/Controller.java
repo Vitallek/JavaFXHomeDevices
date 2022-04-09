@@ -1,6 +1,5 @@
 package com.example.javafxhomedevices;
 
-import com.example.javafxhomedevices.Apartment.Apartment;
 import com.example.javafxhomedevices.Apartment.ApartmentMain;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -34,9 +33,17 @@ public class Controller implements Initializable {
     @FXML
     private TextField socketNameEnter;
     @FXML
+    private TextField deviceNameEnter;
+    @FXML
+    private TextField devicePowerEnter;
+    @FXML
+    private TextField deviceSocketNameEnter;
+    @FXML
     private Button addRoomBTN;
     @FXML
     private Button addSocketBTN;
+    @FXML
+    private Button addDeviceBTN;
     @FXML
     private Label activeDevPowerOverview;
     @FXML
@@ -151,7 +158,7 @@ public class Controller implements Initializable {
                 labelContainer.setPrefWidth(450.0);
 
                 Label itemDevName = new Label (
-                        Apartment.getAllDevices().get(i).getDeviceName()
+                    Apartment.getAllDevices().get(i).getDeviceName()
                 );
                 itemDevName.setTextFill(Paint.valueOf("#b7c3d7"));
                 itemDevName.setAlignment(Pos.CENTER);
@@ -159,19 +166,19 @@ public class Controller implements Initializable {
                 labelContainer.getChildren().add(itemDevName);
 
                 Label itemDevPower = new Label(
-                        Integer.toString(Apartment.getAllDevices().get(i).getDevicePower())
+                    Integer.toString(Apartment.getAllDevices().get(i).getDevicePower())
                 );
                 itemDevPower.setTextFill(Paint.valueOf("#b7c3d7"));
                 itemDevPower.setAlignment(Pos.CENTER);
-                itemDevPower.setPrefWidth(180.0);
+                itemDevPower.setPrefWidth(100.0);
                 labelContainer.getChildren().add(itemDevPower);
 
                 Label itemDevRoom = new Label(
-                        Apartment.getAllDevices().get(i).getRoom().getRoomName()
+                    Apartment.getAllDevices().get(i).getRoom().getRoomName()
                 );
                 itemDevRoom.setTextFill(Paint.valueOf("#b7c3d7"));
                 itemDevRoom.setAlignment(Pos.CENTER);
-                itemDevRoom.setPrefWidth(200.0);
+                itemDevRoom.setPrefWidth(150.0);
                 labelContainer.getChildren().add(itemDevRoom);
 
                 Button itemDevStatus = new Button("-");
@@ -193,7 +200,7 @@ public class Controller implements Initializable {
                 });
                 itemDevStatus.setPrefHeight(10.0);
                 itemDevStatus.setAlignment(Pos.CENTER);
-                itemDevStatus.setPrefWidth(180.0);
+                itemDevStatus.setPrefWidth(80.0);
 
                 if (Apartment.getAllDevices().get(i).getIsOn()){
                     itemDevStatus.setText("active");
@@ -211,6 +218,125 @@ public class Controller implements Initializable {
                 e.printStackTrace();
             }
         }
+
+        addDeviceBTN.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(Apartment.getAllSockets().size() == 0){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="No sockets exists. Add socket first.";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                if(deviceNameEnter.getText().equals("") || devicePowerEnter.getText().equals("") || deviceSocketNameEnter.getText().equals("")){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="Empty fields!";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                if(Integer.parseInt(devicePowerEnter.getText()) > 15000 || Integer.parseInt(devicePowerEnter.getText()) < 0){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="Device power should be in range from 0 to 15000";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                if(Apartment.findSocket(deviceSocketNameEnter.getText()) == null){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="No socket found with provided name. Try another one";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                if(Apartment.findRoom(deviceNameEnter.getText()) != null){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="Device with this name already exists";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+
+                Apartment.addDevice(deviceNameEnter.getText(),Integer.parseInt(devicePowerEnter.getText()),deviceSocketNameEnter.getText());
+                devAmountOverview.setText(String.valueOf(Integer.parseInt(devAmountOverview.getText()) + 1));
+
+                HBox labelContainer = new HBox();
+                labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
+                labelContainer.setAlignment(Pos.CENTER_LEFT);
+                labelContainer.setPrefHeight(53.0);
+                labelContainer.setPrefWidth(450.0);
+
+                Label itemDevName = new Label (
+                        Apartment.getAllDevices().get(Apartment.getAllDevices().size()-1).getDeviceName()
+                );
+                itemDevName.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevName.setAlignment(Pos.CENTER);
+                itemDevName.setPrefWidth(200.0);
+                labelContainer.getChildren().add(itemDevName);
+
+                Label itemDevPower = new Label(
+                        Integer.toString(Apartment.getAllDevices().get(Apartment.getAllDevices().size()-1).getDevicePower())
+                );
+                itemDevPower.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevPower.setAlignment(Pos.CENTER);
+                itemDevPower.setPrefWidth(100.0);
+                labelContainer.getChildren().add(itemDevPower);
+
+                Label itemDevRoom = new Label(
+                        Apartment.getAllDevices().get(Apartment.getAllDevices().size()-1).getRoom().getRoomName()
+                );
+                itemDevRoom.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevRoom.setAlignment(Pos.CENTER);
+                itemDevRoom.setPrefWidth(150.0);
+                labelContainer.getChildren().add(itemDevRoom);
+
+                Button itemDevStatus = new Button("-");
+                itemDevStatus.setId(Integer.toString(Apartment.getAllDevices().size()-1));
+                itemDevStatus.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        Apartment.getAllDevices().get(Integer.parseInt(itemDevStatus.getId())).switchPower();
+                        if (Apartment.getAllDevices().get(Integer.parseInt(itemDevStatus.getId())).getIsOn()){
+                            itemDevStatus.setText("active");
+                            itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.GREEN, 2.0, 2.0,0.0,0.0));
+                        } else {
+                            itemDevStatus.setText("inactive");
+                            itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.RED, 2.0, 2.0,0.0,0.0));
+                        }
+                        activeDevAmountOverview.setText(String.valueOf(Apartment.enabledDeviceAmount()));
+                        activeDevPowerOverview.setText(String.valueOf(Apartment.calculateTotalPower()));
+                    }
+                });
+                itemDevStatus.setPrefHeight(10.0);
+                itemDevStatus.setAlignment(Pos.CENTER);
+                itemDevStatus.setPrefWidth(80.0);
+
+                if (Apartment.getAllDevices().get(Apartment.getAllDevices().size()-1).getIsOn()){
+                    itemDevStatus.setText("active");
+                    itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.GREEN, 2.0, 2.0,0.0,0.0));
+
+                } else {
+                    itemDevStatus.setText("inactive");
+                    itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.RED, 2.0, 2.0,0.0,0.0));
+                }
+                itemDevStatus.setTextFill(Paint.valueOf("#b7c3d7"));
+                labelContainer.getChildren().add(itemDevStatus);
+
+                deviceItemPane.getChildren().add(labelContainer);
+            }
+        });
+
     }
 
     public void initSocketPane(ApartmentMain Apartment){
@@ -239,9 +365,12 @@ public class Controller implements Initializable {
                 itemSocketRoomName.setPrefWidth(180.0);
                 labelContainer.getChildren().add(itemSocketRoomName);
 
-                Label itemSocketDevice = new Label (
-                        Apartment.getAllSockets().get(i).getDevice().getDeviceName()
-                );
+                Label itemSocketDevice = new Label ("-");
+                
+                if(Apartment.getAllSockets().get(i).getDevice() != null){
+                    itemSocketDevice.setText(Apartment.getAllSockets().get(i).getDevice().getDeviceName());
+                }
+
                 itemSocketDevice.setTextFill(Paint.valueOf("#b7c3d7"));
                 itemSocketDevice.setAlignment(Pos.CENTER);
                 itemSocketDevice.setPrefWidth(180.0);
@@ -280,6 +409,15 @@ public class Controller implements Initializable {
                     alert.setTitle("some alert");
                     alert.setHeaderText("Information Alert");
                     String s ="No room found with provided name. Try another one";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                if(Apartment.findSocket(socketNameEnter.getText()) != null){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="Socket with this name already exists";
                     alert.setContentText(s);
                     alert.show();
                     return;
@@ -356,6 +494,15 @@ public class Controller implements Initializable {
                     alert.setTitle("some alert");
                     alert.setHeaderText("Information Alert");
                     String s ="Room name cannot be empty";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                if(Apartment.findRoom(roomNameEnter.getText()) != null){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="Room with this name already exists";
                     alert.setContentText(s);
                     alert.show();
                     return;

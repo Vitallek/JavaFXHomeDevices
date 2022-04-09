@@ -246,65 +246,7 @@ public class ApartmentMain {
      * @param scanner contains device name first
      * @param scanner contains device power second
      * */
-    public void addDevice(Scanner scanner){
-        if(allSockets.isEmpty()) {
-            System.out.println("\n No sockets in rooms. ");
-            return;
-        }
-        try{
-            int freeSocCounter = 0;
-            for(Socket socket : allSockets){
-                if(socket.getDevice() == null) {
-                    freeSocCounter += 1;
-                    break;
-                }
-            }
-            if(freeSocCounter == 0){
-                throw new NoFreeSockets("No free sockets. \n");
-            }
-        } catch (NoFreeSockets ex){
-            System.out.println("error " + ex);
-            return;
-        }
-
-
-        System.out.println("\n Enter device name: ");
-        String deviceName = scanner.nextLine();
-        if (deviceName.length() == 0 || getDeviceByFullName(deviceName) != null){
-            System.out.println("\n Name cannot be empty or already taken, try again. ");
-            return;
-        }
-
-        int devicePower = -1;
-        while (devicePower < 0){
-            try{
-                System.out.println("\n Enter device power in wats: ");
-                devicePower = Integer.parseInt(scanner.nextLine());
-                if(devicePower > 15000){
-                    throw new OverPower("Too much power. \n");
-                }
-            }
-            catch (Exception ex){
-                System.out.println("\n Error " + ex);
-                devicePower = -1;
-            }
-        }
-
-        System.out.println("\n Enter socket name: ");
-        showFreeSockets();
-        String socketName = scanner.nextLine();
-        while (findSocket(socketName) == null){
-            try{
-                System.out.println("\n error. Socket is not found or already taken. ");
-                showFreeSockets();
-                socketName = scanner.nextLine();
-                if(findSocket(socketName).getDevice() != null){
-                    throw new SocketIsAleadyTaken("Socket is already taken ");
-                }
-            } catch (SocketIsAleadyTaken ex){
-                System.out.println(ex);
-            }
-        }
+    public void addDevice(String deviceName,int devicePower,String socketName){
         Socket tempSocket = findSocket(socketName);
         Room tempRoom = tempSocket.getRoom();
 
