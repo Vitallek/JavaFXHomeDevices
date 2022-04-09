@@ -1,5 +1,6 @@
 package com.example.javafxhomedevices;
 
+import com.example.javafxhomedevices.Apartment.Apartment;
 import com.example.javafxhomedevices.Apartment.ApartmentMain;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -55,6 +56,8 @@ public class Controller implements Initializable {
     @FXML
     private VBox socketItemPane = null;
     @FXML
+    private VBox deviceItemPane = null;
+    @FXML
     private Label roomAmountOverview;
     @FXML
     private Label socketAmountOverview;
@@ -83,48 +86,130 @@ public class Controller implements Initializable {
     @FXML
     private Pane paneOverview;
 
+    final private String apartmentName = "r6siege";
+    final private ApartmentMain Apartment = new ApartmentMain(apartmentName);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        paneOverview.setStyle("-fx-background-color : #02030A");
-        paneOverview.toFront();
+        paneOverview.setVisible(true);
+        paneRooms.setVisible(false);
+        paneDevices.setVisible(false);
+        paneSockets.setVisible(false);
 
-        final String apartmentName = "r6siege";
-
-        ApartmentMain Apartment = new ApartmentMain(apartmentName);
         //TODO
         Apartment.startConfig();
         initOverviewPane(Apartment);
         initRoomPane(Apartment);
         initSocketPane(Apartment);
+        initDevicePane(Apartment);
     }
-
 
     public void handleClicks(ActionEvent actionEvent) {
         if (actionEvent.getSource() == btnRooms) {
+            roomsItemPane.getChildren().clear();
+            initRoomPane(Apartment);
             paneRooms.setVisible(true);
             paneOverview.setVisible(false);
             paneDevices.setVisible(false);
             paneSockets.setVisible(false);
         }
         if (actionEvent.getSource() == btnSockets) {
+            socketItemPane.getChildren().clear();
+            initSocketPane(Apartment);
             paneRooms.setVisible(false);
             paneOverview.setVisible(false);
             paneDevices.setVisible(false);
             paneSockets.setVisible(true);
         }
         if (actionEvent.getSource() == btnOverview) {
+            pnItems.getChildren().clear();
+            initOverviewPane(Apartment);
             paneRooms.setVisible(false);
             paneOverview.setVisible(true);
             paneDevices.setVisible(false);
             paneSockets.setVisible(false);
         }
-        if(actionEvent.getSource()==btnDevices)
-        {
+        if(actionEvent.getSource()==btnDevices) {
+            deviceItemPane.getChildren().clear();
+            initDevicePane(Apartment);
             paneRooms.setVisible(false);
             paneOverview.setVisible(false);
             paneDevices.setVisible(true);
             paneSockets.setVisible(false);
+        }
+    }
+
+
+    public void initDevicePane(ApartmentMain Apartment){
+        int deviceAmountInt = Apartment.getAllDevices().size();
+        for (int i = 0; i < deviceAmountInt; i++) {
+            try {
+                HBox labelContainer = new HBox();
+                labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
+                labelContainer.setAlignment(Pos.CENTER_LEFT);
+                labelContainer.setPrefHeight(53.0);
+                labelContainer.setPrefWidth(450.0);
+
+                Label itemDevName = new Label (
+                        Apartment.getAllDevices().get(i).getDeviceName()
+                );
+                itemDevName.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevName.setAlignment(Pos.CENTER);
+                itemDevName.setPrefWidth(200.0);
+                labelContainer.getChildren().add(itemDevName);
+
+                Label itemDevPower = new Label(
+                        Integer.toString(Apartment.getAllDevices().get(i).getDevicePower())
+                );
+                itemDevPower.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevPower.setAlignment(Pos.CENTER);
+                itemDevPower.setPrefWidth(180.0);
+                labelContainer.getChildren().add(itemDevPower);
+
+                Label itemDevRoom = new Label(
+                        Apartment.getAllDevices().get(i).getRoom().getRoomName()
+                );
+                itemDevRoom.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevRoom.setAlignment(Pos.CENTER);
+                itemDevRoom.setPrefWidth(200.0);
+                labelContainer.getChildren().add(itemDevRoom);
+
+                Button itemDevStatus = new Button("-");
+                itemDevStatus.setId(Integer.toString(i));
+                itemDevStatus.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        Apartment.getAllDevices().get(Integer.parseInt(itemDevStatus.getId())).switchPower();
+                        if (Apartment.getAllDevices().get(Integer.parseInt(itemDevStatus.getId())).getIsOn()){
+                            itemDevStatus.setText("active");
+                            itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.GREEN, 2.0, 2.0,0.0,0.0));
+                        } else {
+                            itemDevStatus.setText("inactive");
+                            itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.RED, 2.0, 2.0,0.0,0.0));
+                        }
+                        activeDevAmountOverview.setText(String.valueOf(Apartment.enabledDeviceAmount()));
+                        activeDevPowerOverview.setText(String.valueOf(Apartment.calculateTotalPower()));
+                    }
+                });
+                itemDevStatus.setPrefHeight(10.0);
+                itemDevStatus.setAlignment(Pos.CENTER);
+                itemDevStatus.setPrefWidth(180.0);
+
+                if (Apartment.getAllDevices().get(i).getIsOn()){
+                    itemDevStatus.setText("active");
+                    itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.GREEN, 2.0, 2.0,0.0,0.0));
+
+                } else {
+                    itemDevStatus.setText("inactive");
+                    itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.RED, 2.0, 2.0,0.0,0.0));
+                }
+                itemDevStatus.setTextFill(Paint.valueOf("#b7c3d7"));
+                labelContainer.getChildren().add(itemDevStatus);
+
+                deviceItemPane.getChildren().add(labelContainer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
