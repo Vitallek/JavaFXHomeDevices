@@ -116,13 +116,16 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        String currentPath = Paths.get("./save/r6siege.amogus").toAbsolutePath().normalize().toString();
+        File file = new File(currentPath);
+        if(!file.exists() && file.isDirectory()) {
+            load();
+        }
         paneOverview.setVisible(true);
         paneRooms.setVisible(false);
         paneDevices.setVisible(false);
         paneSockets.setVisible(false);
 
-        //TODO
-        Apartment.startConfig();
         initOverviewPane(Apartment);
         initRoomPane(Apartment);
         initSocketPane(Apartment);
@@ -165,6 +168,7 @@ public class Controller implements Initializable {
     }
 
     public void initSortedByPowerDevicePane(ArrayList<Device> sortedDeviceListByPower){
+        deviceItemPane.getChildren().clear();
         int deviceAmountInt = sortedDeviceListByPower.size();
         for (int i = 0; i < deviceAmountInt; i++) {
             try {
@@ -406,6 +410,7 @@ public class Controller implements Initializable {
     }
 
     public void initDevicePane(ApartmentMain Apartment){
+        deviceItemPane.getChildren().clear();
         int deviceAmountInt = Apartment.getAllDevices().size();
         for (int i = 0; i < deviceAmountInt; i++) {
             try {
@@ -645,6 +650,7 @@ public class Controller implements Initializable {
     }
 
     public void initSocketPane(ApartmentMain Apartment){
+        socketItemPane.getChildren().clear();
         int socketAmountInt = Apartment.getAllSockets().size();
         for (int i = 0; i < socketAmountInt; i++) {
             try {
@@ -768,6 +774,7 @@ public class Controller implements Initializable {
     }
 
     public void initRoomPane(ApartmentMain Apartment){
+        roomsItemPane.getChildren().clear();
         int roomAmountInt = Apartment.getAllRooms().size();
         for (int i = 0; i < roomAmountInt; i++) {
             try {
@@ -834,7 +841,7 @@ public class Controller implements Initializable {
     }
 
     public void searchPane(ArrayList<Device> searchResult){
-
+        pnItems.getChildren().clear();
         int deviceAmountInt = searchResult.size();
 
         for (int i = 0; i < deviceAmountInt; i++) {
@@ -917,6 +924,7 @@ public class Controller implements Initializable {
     }
 
     public void initOverviewPane(ApartmentMain Apartment){
+        pnItems.getChildren().clear();
         int roomAmountInt = Apartment.getAllRooms().size();
         int socketAmountInt = Apartment.getAllSockets().size();
         int deviceAmountInt = Apartment.getAllDevices().size();
@@ -1034,13 +1042,41 @@ public class Controller implements Initializable {
                         new FileChooser.ExtensionFilter("All Files", "*.*"));
                 ContextMenu saveMenu = new ContextMenu();
                 saveMenu.centerOnScreen();
-                String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+                String currentPath = Paths.get("./save/").toAbsolutePath().normalize().toString();
                 fileChooser.setInitialDirectory(new File(currentPath));
                 File fileToSave = fileChooser.showSaveDialog(saveMenu);
                 if(fileToSave != null ){
-                    Apartment.saveConfig(fileToSave.getAbsolutePath(),fileToSave);
+                    Apartment.saveConfig(fileToSave);
                 }
             }
         });
+
+        load.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                load();
+                initOverviewPane(Apartment);
+                initRoomPane(Apartment);
+                initSocketPane(Apartment);
+                initDevicePane(Apartment);
+            }
+        });
+    }
+
+    public void load () {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Files", "*.*"),
+                new FileChooser.ExtensionFilter("Apartment", ".amogus")
+                );
+        ContextMenu saveMenu = new ContextMenu();
+        saveMenu.centerOnScreen();
+        String currentPath = Paths.get("./save/").toAbsolutePath().normalize().toString();
+        fileChooser.setInitialDirectory(new File(currentPath));
+        File fileToOpen = fileChooser.showOpenDialog(saveMenu);
+        if(fileToOpen != null ){
+            Apartment.loadConfig(fileToOpen);
+        }
     }
 }

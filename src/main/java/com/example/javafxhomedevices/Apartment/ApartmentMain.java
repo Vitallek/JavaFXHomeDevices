@@ -151,9 +151,9 @@ public class ApartmentMain {
      * @param ArrayList<Socket>
      * @param ArrayList<device>
      * */
-    public void saveConfig(String path, File file){
+    public void saveConfig(File file){
         ObjectReaderWriter objW = new ObjectReaderWriter();
-        objW.writeToFile(apartment, path, file);
+        objW.writeToFile(apartment, file);
     }
 
     /*
@@ -161,20 +161,14 @@ public class ApartmentMain {
      * it's also deletes all arrays and fills them again
      * @param scanner that contains file name
      * */
-    public void loadConfig(Scanner scanner){
-        System.out.println("Enter filename WITH format (name.amogus): \n");
-        fileName = scanner.nextLine();
-        while(fileName.isEmpty()){
-            fileName = scanner.nextLine();
-            System.out.println("Name cannot be empty \n");
-        }
+    public void loadConfig(File file){
         try{
             ObjectReaderWriter objR = new ObjectReaderWriter();
             apartment = new Apartment(apartmentName);
             allRooms.clear();
             allSockets.clear();
             allDevices.clear();
-            apartment = objR.loadApartmentFromFile(fileName);
+            apartment = objR.loadApartmentFromFile(file);
 
             for(Room room: apartment.getRooms()){
                 allRooms.add(room);

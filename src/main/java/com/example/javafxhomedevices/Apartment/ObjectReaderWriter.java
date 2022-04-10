@@ -11,7 +11,7 @@ public class ObjectReaderWriter {
 
     }
 
-    public void writeToFile(Apartment apartment, String path, File file){
+    public void writeToFile(Apartment apartment, File file){
         try {
             ObjectOutputStream oOS = new ObjectOutputStream(new FileOutputStream(file));
             oOS.writeObject(apartment);
@@ -21,14 +21,12 @@ public class ObjectReaderWriter {
         }
     }
 
-    public Apartment loadApartmentFromFile(String filename){
+    public Apartment loadApartmentFromFile(File file){
         try {
             try{
-                FileInputStream fileInput = new FileInputStream(filename);
+                FileInputStream fileInput = new FileInputStream(file);
                 ObjectInputStream oIS = new ObjectInputStream(fileInput);
-                Apartment apartment = new Apartment();
-                apartment = (Apartment) oIS.readObject();
-                System.out.println("Loaded from " + filename);
+                Apartment apartment = (Apartment) oIS.readObject();
                 oIS.close();
                 return apartment;
             } catch (FileNotFoundException ex){
