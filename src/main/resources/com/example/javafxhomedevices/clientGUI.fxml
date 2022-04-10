@@ -88,9 +88,14 @@
             <children>
 
 
-                <Pane fx:id="paneOverview" prefHeight="554.0" prefWidth="793.0" visible="false">
+                <Pane fx:id="paneOverview" prefHeight="554.0" prefWidth="793.0">
                     <children>
-                        <TextField layoutX="590.0" layoutY="47.0" prefHeight="27.0" prefWidth="183.0" promptText="search" style="-fx-background-color: #02030A; -fx-border-color: #B7C3D7; -fx-border-radius: 2em;" />
+                        <TextField fx:id="searchDevice" layoutX="590.0" layoutY="47.0" prefHeight="27.0" prefWidth="183.0" promptText="search" style="-fx-background-color: #02030A; -fx-text-inner-color: white; -fx-border-color: #B7C3D7; -fx-border-radius: 2em;" />
+                        <ImageView fx:id="searchButton" fitHeight="17.0" fitWidth="16.0" layoutX="749.0" layoutY="53.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../../assets/icons8_Search_52px.png" />
+                            </image>
+                        </ImageView>
                         <Label layoutX="57.0" layoutY="25.0" text="Apartment overview" textFill="#e7e5e5">
                             <font>
                                 <Font size="24.0" />
@@ -188,11 +193,6 @@
                                 </VBox>
                             </content>
                         </ScrollPane>
-                        <ImageView fitHeight="17.0" fitWidth="16.0" layoutX="749.0" layoutY="53.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../../../assets/icons8_Search_52px.png" />
-                            </image>
-                        </ImageView>
                     </children>
                 </Pane>
 
@@ -329,7 +329,7 @@
                 </Pane>
 
 
-                <Pane fx:id="paneDevices" prefHeight="200.0" prefWidth="200.0">
+                <Pane fx:id="paneDevices" prefHeight="200.0" prefWidth="200.0" visible="false">
                     <children>
                         <VBox layoutX="14.0" layoutY="25.0" prefHeight="550.0" prefWidth="450.0">
                             <children>

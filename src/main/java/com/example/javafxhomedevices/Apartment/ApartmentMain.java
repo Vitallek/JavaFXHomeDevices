@@ -407,18 +407,19 @@ public class ApartmentMain {
      * @param scanner contains device name
      * @return device
      * */
-    public void findDeviceByInput(Scanner scanner){
+    public ArrayList<Device> findDeviceByInput(String partOfDeviceName){
         if(!allDevices.isEmpty()){
-            System.out.println("Input device name (or part of name): ");
-            String partOfDeviceName = scanner.nextLine();
+            ArrayList<Device> list = new ArrayList<>();
             for (Device device : allDevices){
                 if (device.getDeviceName().toLowerCase().contains(partOfDeviceName.toLowerCase())
                         || device.getDeviceName().equalsIgnoreCase(partOfDeviceName)){
-                    System.out.println(device +"\n");
+                    list.add(device);
                 }
             }
+            return list;
         } else {
             System.out.println("No device detected. \n");
+            return null;
         }
     }
 

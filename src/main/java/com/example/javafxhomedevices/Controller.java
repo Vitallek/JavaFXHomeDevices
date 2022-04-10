@@ -16,6 +16,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -31,7 +33,11 @@ public class Controller implements Initializable {
 
 //    fxml
     @FXML
+    private ImageView searchButton;
+    @FXML
     private Label devNameOverview;
+    @FXML
+    private TextField searchDevice;
     @FXML
     private TextField roomNameEnter;
     @FXML
@@ -154,6 +160,247 @@ public class Controller implements Initializable {
         }
     }
 
+    public void initSortedByPowerDevicePane(ArrayList<Device> sortedDeviceListByPower){
+        int deviceAmountInt = sortedDeviceListByPower.size();
+        for (int i = 0; i < deviceAmountInt; i++) {
+            try {
+                HBox labelContainer = new HBox();
+                labelContainer.setSpacing(20.0);
+                labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
+                labelContainer.setAlignment(Pos.CENTER_LEFT);
+                labelContainer.setPrefHeight(53.0);
+                labelContainer.setPrefWidth(700);
+
+                Label itemDevName = new Label (
+                    sortedDeviceListByPower.get(i).getDeviceName()
+                );
+                itemDevName.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevName.setAlignment(Pos.CENTER);
+                itemDevName.setPrefWidth(190.0);
+                labelContainer.getChildren().add(itemDevName);
+
+                Label itemDevPower = new Label(
+                    Integer.toString(sortedDeviceListByPower.get(i).getDevicePower())
+                );
+                itemDevPower.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevPower.setAlignment(Pos.CENTER);
+                itemDevPower.setPrefWidth(90.0);
+                labelContainer.getChildren().add(itemDevPower);
+
+                Label itemDevRoom = new Label(
+                        sortedDeviceListByPower.get(i).getRoom().getRoomName()
+                );
+                itemDevRoom.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevRoom.setAlignment(Pos.CENTER);
+                itemDevRoom.setPrefWidth(140.0);
+                labelContainer.getChildren().add(itemDevRoom);
+
+                Button itemDevStatus = new Button("-");
+                itemDevStatus.setId(Integer.toString(i));
+                itemDevStatus.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        sortedDeviceListByPower.get(Integer.parseInt(itemDevStatus.getId())).switchPower();
+                        if (sortedDeviceListByPower.get(Integer.parseInt(itemDevStatus.getId())).getIsOn()){
+                            itemDevStatus.setText("active");
+                            itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.GREEN, 2.0, 2.0,0.0,0.0));
+                        } else {
+                            itemDevStatus.setText("inactive");
+                            itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.RED, 2.0, 2.0,0.0,0.0));
+                        }
+                        activeDevAmountOverview.setText(String.valueOf(Apartment.enabledDeviceAmount()));
+                        activeDevPowerOverview.setText(String.valueOf(Apartment.calculateTotalPower()));
+                    }
+                });
+                itemDevStatus.setPrefHeight(10.0);
+                itemDevStatus.setAlignment(Pos.CENTER);
+                itemDevStatus.setPrefWidth(90.0);
+
+                if (sortedDeviceListByPower.get(i).getIsOn()){
+                    itemDevStatus.setText("active");
+                    itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.GREEN, 2.0, 2.0,0.0,0.0));
+
+                } else {
+                    itemDevStatus.setText("inactive");
+                    itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.RED, 2.0, 2.0,0.0,0.0));
+                }
+                itemDevStatus.setTextFill(Paint.valueOf("#b7c3d7"));
+                labelContainer.getChildren().add(itemDevStatus);
+
+                Button deleteDevice = new Button("Delete");
+                deleteDevice.setPrefHeight(10.0);
+                deleteDevice.setAlignment(Pos.CENTER);
+                deleteDevice.setPrefWidth(70.0);
+                deleteDevice.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        Apartment.removeDevice(itemDevName.getText());
+                        deviceItemPane.getChildren().clear();
+                        initDevicePane(Apartment);
+                    }
+                });
+
+                labelContainer.getChildren().add(deleteDevice);
+
+                deviceItemPane.getChildren().add(labelContainer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        powerSort.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(Apartment.getAllDevices().size() == 0){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="No device exists. Add device first.";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                ArrayList<Device> sortedDeviceListByPower = Apartment.getAllDevices();
+                sortedDeviceListByPower.sort(new DevicePowerSorter());
+                deviceItemPane.getChildren().clear();
+                initSortedByPowerDevicePane(sortedDeviceListByPower);
+            }
+        });
+        addDeviceBTN.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(Apartment.getAllSockets().size() == 0){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="No sockets exists. Add socket first.";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                if(deviceNameEnter.getText().equals("") || devicePowerEnter.getText().equals("") || deviceSocketNameEnter.getText().equals("")){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="Empty fields!";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                if(Integer.parseInt(devicePowerEnter.getText()) > 15000 || Integer.parseInt(devicePowerEnter.getText()) < 0){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="Device power should be in range from 0 to 15000";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                if(Apartment.findSocket(deviceSocketNameEnter.getText()) == null){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="No socket found with provided name. Try another one";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+                if(Apartment.findRoom(deviceNameEnter.getText()) != null){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="Device with this name already exists";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
+
+                Apartment.addDevice(deviceNameEnter.getText(),Integer.parseInt(devicePowerEnter.getText()),deviceSocketNameEnter.getText());
+                devAmountOverview.setText(String.valueOf(Integer.parseInt(devAmountOverview.getText()) + 1));
+
+                HBox labelContainer = new HBox();
+                labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
+                labelContainer.setAlignment(Pos.CENTER_LEFT);
+                labelContainer.setPrefHeight(53.0);
+                labelContainer.setPrefWidth(450.0);
+
+                Label itemDevName = new Label (
+                        Apartment.getAllDevices().get(Apartment.getAllDevices().size()-1).getDeviceName()
+                );
+                itemDevName.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevName.setAlignment(Pos.CENTER);
+                itemDevName.setPrefWidth(200.0);
+                labelContainer.getChildren().add(itemDevName);
+
+                Label itemDevPower = new Label(
+                        Integer.toString(Apartment.getAllDevices().get(Apartment.getAllDevices().size()-1).getDevicePower())
+                );
+                itemDevPower.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevPower.setAlignment(Pos.CENTER);
+                itemDevPower.setPrefWidth(100.0);
+                labelContainer.getChildren().add(itemDevPower);
+
+                Label itemDevRoom = new Label(
+                        Apartment.getAllDevices().get(Apartment.getAllDevices().size()-1).getRoom().getRoomName()
+                );
+                itemDevRoom.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevRoom.setAlignment(Pos.CENTER);
+                itemDevRoom.setPrefWidth(150.0);
+                labelContainer.getChildren().add(itemDevRoom);
+
+                Button itemDevStatus = new Button("-");
+                itemDevStatus.setId(Integer.toString(Apartment.getAllDevices().size()-1));
+                itemDevStatus.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        Apartment.getAllDevices().get(Integer.parseInt(itemDevStatus.getId())).switchPower();
+                        if (Apartment.getAllDevices().get(Integer.parseInt(itemDevStatus.getId())).getIsOn()){
+                            itemDevStatus.setText("active");
+                            itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.GREEN, 2.0, 2.0,0.0,0.0));
+                        } else {
+                            itemDevStatus.setText("inactive");
+                            itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.RED, 2.0, 2.0,0.0,0.0));
+                        }
+                        activeDevAmountOverview.setText(String.valueOf(Apartment.enabledDeviceAmount()));
+                        activeDevPowerOverview.setText(String.valueOf(Apartment.calculateTotalPower()));
+                    }
+                });
+                itemDevStatus.setPrefHeight(10.0);
+                itemDevStatus.setAlignment(Pos.CENTER);
+                itemDevStatus.setPrefWidth(80.0);
+
+                if (Apartment.getAllDevices().get(Apartment.getAllDevices().size()-1).getIsOn()){
+                    itemDevStatus.setText("active");
+                    itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.GREEN, 2.0, 2.0,0.0,0.0));
+
+                } else {
+                    itemDevStatus.setText("inactive");
+                    itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.RED, 2.0, 2.0,0.0,0.0));
+                }
+                itemDevStatus.setTextFill(Paint.valueOf("#b7c3d7"));
+                labelContainer.getChildren().add(itemDevStatus);
+
+                Button deleteDevice = new Button("Delete");
+                deleteDevice.setPrefHeight(10.0);
+                deleteDevice.setAlignment(Pos.CENTER);
+                deleteDevice.setPrefWidth(70.0);
+                deleteDevice.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        Apartment.removeDevice(itemDevName.getText());
+                        deviceItemPane.getChildren().clear();
+                        initDevicePane(Apartment);
+                    }
+                });
+                labelContainer.getChildren().add(deleteDevice);
+
+
+                deviceItemPane.getChildren().add(labelContainer);
+            }
+        });
+
+    }
+
     public void initDevicePane(ApartmentMain Apartment){
         int deviceAmountInt = Apartment.getAllDevices().size();
         for (int i = 0; i < deviceAmountInt; i++) {
@@ -245,10 +492,19 @@ public class Controller implements Initializable {
         powerSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                if(Apartment.getAllDevices().size() == 0){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("some alert");
+                    alert.setHeaderText("Information Alert");
+                    String s ="No device exists. Add device first.";
+                    alert.setContentText(s);
+                    alert.show();
+                    return;
+                }
                 ArrayList<Device> sortedDeviceListByPower = Apartment.getAllDevices();
                 sortedDeviceListByPower.sort(new DevicePowerSorter());
-                //TODO
-                deviceItemPane.getChildren().sorted();
+                deviceItemPane.getChildren().clear();
+                initSortedByPowerDevicePane(sortedDeviceListByPower);
             }
         });
         addDeviceBTN.setOnAction(new EventHandler<ActionEvent>() {
@@ -573,6 +829,89 @@ public class Controller implements Initializable {
         });
     }
 
+    public void searchPane(ArrayList<Device> searchResult){
+
+        int deviceAmountInt = searchResult.size();
+
+        for (int i = 0; i < deviceAmountInt; i++) {
+            try {
+                HBox labelContainer = new HBox();
+                labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
+                labelContainer.setAlignment(Pos.CENTER_LEFT);
+                labelContainer.setPrefHeight(53.0);
+                labelContainer.setPrefWidth(750.0);
+
+                Label itemDevName = new Label (
+                    searchResult.get(i).getDeviceName()
+                );
+                itemDevName.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevName.setAlignment(Pos.CENTER);
+                itemDevName.setPrefWidth(200.0);
+                labelContainer.getChildren().add(itemDevName);
+
+                Label itemDevPower = new Label(
+                    Integer.toString(searchResult.get(i).getDevicePower())
+                );
+                itemDevPower.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevPower.setAlignment(Pos.CENTER);
+                itemDevPower.setPrefWidth(100.0);
+                labelContainer.getChildren().add(itemDevPower);
+
+                Label itemDevRoom = new Label(
+                    searchResult.get(i).getRoom().getRoomName()
+                );
+                itemDevRoom.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevRoom.setAlignment(Pos.CENTER);
+                itemDevRoom.setPrefWidth(150.0);
+                labelContainer.getChildren().add(itemDevRoom);
+
+                Label itemDevSocket = new Label(
+                    searchResult.get(i).getSocket().getSocketName()
+                );
+                itemDevSocket.setTextFill(Paint.valueOf("#b7c3d7"));
+                itemDevSocket.setAlignment(Pos.CENTER);
+                itemDevSocket.setPrefWidth(150.0);
+                labelContainer.getChildren().add(itemDevSocket);
+
+                Button itemDevStatus = new Button("-");
+                itemDevStatus.setId(Integer.toString(i));
+                itemDevStatus.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        searchResult.get(Integer.parseInt(itemDevStatus.getId())).switchPower();
+                        if (searchResult.get(Integer.parseInt(itemDevStatus.getId())).getIsOn()){
+                            itemDevStatus.setText("active");
+                            itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.GREEN, 2.0, 2.0,0.0,0.0));
+                        } else {
+                            itemDevStatus.setText("inactive");
+                            itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.RED, 2.0, 2.0,0.0,0.0));
+                        }
+                        activeDevAmountOverview.setText(String.valueOf(Apartment.enabledDeviceAmount()));
+                        activeDevPowerOverview.setText(String.valueOf(Apartment.calculateTotalPower()));
+                    }
+                });
+                itemDevStatus.setPrefHeight(10.0);
+                itemDevStatus.setAlignment(Pos.CENTER);
+                itemDevStatus.setPrefWidth(80.0);
+                if (searchResult.get(i).getIsOn()){
+                    itemDevStatus.setText("active");
+                    itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.GREEN, 2.0, 2.0,0.0,0.0));
+
+                } else {
+                    itemDevStatus.setText("inactive");
+                    itemDevStatus.setEffect(new DropShadow(BlurType.GAUSSIAN, Color.RED, 2.0, 2.0,0.0,0.0));
+                }
+                itemDevStatus.setTextFill(Paint.valueOf("#b7c3d7"));
+                labelContainer.getChildren().add(itemDevStatus);
+
+                pnItems.getChildren().add(labelContainer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     public void initOverviewPane(ApartmentMain Apartment){
         int roomAmountInt = Apartment.getAllRooms().size();
         int socketAmountInt = Apartment.getAllSockets().size();
@@ -667,5 +1006,18 @@ public class Controller implements Initializable {
                 e.printStackTrace();
             }
         }
+
+        searchButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(!searchDevice.getText().equals("")){
+                    pnItems.getChildren().clear();
+                    searchPane(Apartment.findDeviceByInput(searchDevice.getText()));
+                } else {
+                    pnItems.getChildren().clear();
+                    searchPane(Apartment.getAllDevices());
+                }
+            }
+        });
     }
 }
