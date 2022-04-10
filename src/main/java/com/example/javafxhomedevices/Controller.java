@@ -170,6 +170,8 @@ public class Controller implements Initializable {
     public void initSortedByPowerDevicePane(ArrayList<Device> sortedDeviceListByPower){
         deviceItemPane.getChildren().clear();
         int deviceAmountInt = sortedDeviceListByPower.size();
+        deviceItemPane.setMinHeight(53*deviceAmountInt+200);
+
         for (int i = 0; i < deviceAmountInt; i++) {
             try {
                 HBox labelContainer = new HBox();
@@ -244,6 +246,7 @@ public class Controller implements Initializable {
                     public void handle(ActionEvent actionEvent) {
                         Apartment.removeDevice(itemDevName.getText());
                         deviceItemPane.getChildren().clear();
+                        deviceItemPane.setMinHeight(53*Apartment.getAllDevices().size()+200);
                         initDevicePane(Apartment);
                     }
                 });
@@ -251,6 +254,7 @@ public class Controller implements Initializable {
                 labelContainer.getChildren().add(deleteDevice);
 
                 deviceItemPane.getChildren().add(labelContainer);
+                deviceItemPane.setMinHeight(53*deviceAmountInt);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -325,6 +329,7 @@ public class Controller implements Initializable {
 
                 Apartment.addDevice(deviceNameEnter.getText(),Integer.parseInt(devicePowerEnter.getText()),deviceSocketNameEnter.getText());
                 devAmountOverview.setText(String.valueOf(Integer.parseInt(devAmountOverview.getText()) + 1));
+                deviceItemPane.setMinHeight(53*Apartment.getAllDevices().size()+200);
 
                 HBox labelContainer = new HBox();
                 labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
@@ -412,6 +417,8 @@ public class Controller implements Initializable {
     public void initDevicePane(ApartmentMain Apartment){
         deviceItemPane.getChildren().clear();
         int deviceAmountInt = Apartment.getAllDevices().size();
+        deviceItemPane.setMinHeight(53*deviceAmountInt+200);
+
         for (int i = 0; i < deviceAmountInt; i++) {
             try {
                 HBox labelContainer = new HBox();
@@ -487,6 +494,7 @@ public class Controller implements Initializable {
                         Apartment.removeDevice(itemDevName.getText());
                         deviceItemPane.getChildren().clear();
                         initDevicePane(Apartment);
+                        deviceItemPane.setMinHeight(53*Apartment.getAllDevices().size()+200);
                     }
                 });
 
@@ -567,6 +575,7 @@ public class Controller implements Initializable {
 
                 Apartment.addDevice(deviceNameEnter.getText(),Integer.parseInt(devicePowerEnter.getText()),deviceSocketNameEnter.getText());
                 devAmountOverview.setText(String.valueOf(Integer.parseInt(devAmountOverview.getText()) + 1));
+                deviceItemPane.setMinHeight(53*Apartment.getAllDevices().size()+200);
 
                 HBox labelContainer = new HBox();
                 labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
@@ -652,6 +661,8 @@ public class Controller implements Initializable {
     public void initSocketPane(ApartmentMain Apartment){
         socketItemPane.getChildren().clear();
         int socketAmountInt = Apartment.getAllSockets().size();
+        socketItemPane.setMinHeight(53*socketAmountInt+200);
+
         for (int i = 0; i < socketAmountInt; i++) {
             try {
                 HBox labelContainer = new HBox();
@@ -736,6 +747,7 @@ public class Controller implements Initializable {
 
                 Apartment.addSocket(socketNameEnter.getText(),roomForSocketEnter.getText());
                 socketAmountOverview.setText(String.valueOf(Integer.parseInt(socketAmountOverview.getText()) + 1));
+                socketItemPane.setMinHeight(53*Apartment.getAllDevices().size()+200);
 
                 HBox labelContainer = new HBox();
                 labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
@@ -776,6 +788,7 @@ public class Controller implements Initializable {
     public void initRoomPane(ApartmentMain Apartment){
         roomsItemPane.getChildren().clear();
         int roomAmountInt = Apartment.getAllRooms().size();
+        roomsItemPane.setMinHeight(53*roomAmountInt+200);
         for (int i = 0; i < roomAmountInt; i++) {
             try {
                 HBox labelContainer = new HBox();
@@ -821,6 +834,7 @@ public class Controller implements Initializable {
                 }
                 Apartment.addRoom(roomNameEnter.getText());
                 roomAmountOverview.setText(String.valueOf(Integer.parseInt(roomAmountOverview.getText()) + 1));
+                roomsItemPane.setMinHeight(53*Apartment.getAllRooms().size()+200);
 
                 HBox labelContainer = new HBox();
                 labelContainer.setStyle("-fx-background-color: #02030A; -fx-background-radius: 5;");
@@ -835,6 +849,7 @@ public class Controller implements Initializable {
                 itemRoomName.setAlignment(Pos.CENTER);
                 itemRoomName.setPrefWidth(200.0);
                 labelContainer.getChildren().add(itemRoomName);
+
                 roomsItemPane.getChildren().add(labelContainer);
             }
         });
@@ -843,6 +858,7 @@ public class Controller implements Initializable {
     public void searchPane(ArrayList<Device> searchResult){
         pnItems.getChildren().clear();
         int deviceAmountInt = searchResult.size();
+        pnItems.setMinHeight(53*deviceAmountInt+200);
 
         for (int i = 0; i < deviceAmountInt; i++) {
             try {
@@ -935,6 +951,8 @@ public class Controller implements Initializable {
         devAmountOverview.setText(Integer.toString(deviceAmountInt));
         activeDevAmountOverview.setText(Integer.toString(enabledDeviceAmountInt));
         activeDevPowerOverview.setText(Integer.toString(activeDevPowerInt));
+        pnItems.setMinHeight(53*deviceAmountInt+200);
+
         for (int i = 0; i < deviceAmountInt; i++) {
             try {
                 HBox labelContainer = new HBox();
@@ -1025,9 +1043,12 @@ public class Controller implements Initializable {
                 if(!searchDevice.getText().equals("")){
                     pnItems.getChildren().clear();
                     searchPane(Apartment.findDeviceByInput(searchDevice.getText()));
+                    deviceItemPane.setMinHeight(53*Apartment.getAllDevices().size()+200);
+
                 } else {
                     pnItems.getChildren().clear();
                     searchPane(Apartment.getAllDevices());
+                    deviceItemPane.setMinHeight(53*Apartment.getAllDevices().size()+200);
                 }
             }
         });
