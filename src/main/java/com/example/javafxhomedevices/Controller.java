@@ -10,10 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
@@ -23,8 +20,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.ResourceBundle;
@@ -50,6 +50,10 @@ public class Controller implements Initializable {
     private TextField devicePowerEnter;
     @FXML
     private TextField deviceSocketNameEnter;
+    @FXML
+    private Button load;
+    @FXML
+    private Button save;
     @FXML
     private Button addRoomBTN;
     @FXML
@@ -1016,6 +1020,25 @@ public class Controller implements Initializable {
                 } else {
                     pnItems.getChildren().clear();
                     searchPane(Apartment.getAllDevices());
+                }
+            }
+        });
+
+        save.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Save");
+                fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("Apartment", ".amogus"),
+                        new FileChooser.ExtensionFilter("All Files", "*.*"));
+                ContextMenu saveMenu = new ContextMenu();
+                saveMenu.centerOnScreen();
+                String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+                fileChooser.setInitialDirectory(new File(currentPath));
+                File fileToSave = fileChooser.showSaveDialog(saveMenu);
+                if(fileToSave != null ){
+                    Apartment.saveConfig(fileToSave.getAbsolutePath(),fileToSave);
                 }
             }
         });

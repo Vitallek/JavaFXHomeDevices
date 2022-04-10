@@ -4,6 +4,7 @@ import com.example.javafxhomedevices.customExceptions.NoFreeSockets;
 import com.example.javafxhomedevices.customExceptions.OverPower;
 import com.example.javafxhomedevices.customExceptions.SocketIsAleadyTaken;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -150,15 +151,9 @@ public class ApartmentMain {
      * @param ArrayList<Socket>
      * @param ArrayList<device>
      * */
-    public void saveConfig(Scanner scanner){
-        System.out.println("Enter filename WITHOUT format (name): \n");
+    public void saveConfig(String path, File file){
         ObjectReaderWriter objW = new ObjectReaderWriter();
-        fileName = scanner.nextLine();
-        while(fileName.isEmpty()){
-            fileName = scanner.nextLine();
-            System.out.println("Name cannot be empty \n");
-        }
-        objW.writeToFile(apartment, fileName);
+        objW.writeToFile(apartment, path, file);
     }
 
     /*

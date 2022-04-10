@@ -1,6 +1,8 @@
 package com.example.javafxhomedevices.Apartment;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 
 
 public class ObjectReaderWriter {
@@ -9,13 +11,11 @@ public class ObjectReaderWriter {
 
     }
 
-    public void writeToFile(Apartment apartment, String fileName){
+    public void writeToFile(Apartment apartment, String path, File file){
         try {
-            System.out.println("Enter file name: \n");
-            ObjectOutputStream oOS = new ObjectOutputStream(new FileOutputStream(fileName + ".amogus"));
+            ObjectOutputStream oOS = new ObjectOutputStream(new FileOutputStream(file));
             oOS.writeObject(apartment);
             oOS.close();
-            System.out.println("Saved to " + fileName + ".amogus");
         } catch(IOException ex) {
             System.out.println("error " + ex);
         }
