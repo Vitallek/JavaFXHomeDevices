@@ -118,8 +118,8 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         String currentPath = Paths.get("./save/r6siege.amogus").toAbsolutePath().normalize().toString();
         File file = new File(currentPath);
-        if(!file.exists() && file.isDirectory()) {
-            load();
+        if(file.exists() && !file.isDirectory()) {
+            Apartment.loadConfig(file);
         }
         paneOverview.setVisible(true);
         paneRooms.setVisible(false);
